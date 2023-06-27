@@ -1,0 +1,6 @@
+SUBSYSTEM=="hid", ACTION=="bind", \
+RUN+="/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
+
+
+SUBSYSTEM=="hid", ACTION=="remove", \
+RUN+="/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""

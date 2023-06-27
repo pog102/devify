@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+
+status=$2
+icon_pack=/usr/share/icons/MonoDev
+user=$(users |  awk '{print $1}')
+
+
+Bind_f()
+{
+  if [ "$status" == "bind" ]; then
+    su $user -c "notify-send -u low -r $3 -i ${icon_pack}/$2.svg '$1' 'Connected'"
+else
+    su $user -c "notify-send -u low -r $3 -i ${icon_pack}/$2.svg '$1' 'Disconnected'"
+  fi
+}
+
+shopt -s nocasematch
+case "$1" in
+ *"Sony"* | "Wireless Controller") Bind_f "PS5 Controller" "ps5_controller" 5
+  ;;
+  *"Katar"*) Bind_f "$1" "corsair" 6
+  ;;
+  *"Keyboard"*) Bind_f "$1" "generic_keyboard" 7
+  ;;
+esac
