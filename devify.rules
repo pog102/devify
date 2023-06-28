@@ -1,6 +1,6 @@
 SUBSYSTEM=="hid", ACTION=="bind", \
-RUN+="/usr/share/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
+RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
 
 
 SUBSYSTEM=="hid", ACTION=="remove", \
-RUN+="/usr/share/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
+RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
