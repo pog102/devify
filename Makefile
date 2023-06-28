@@ -20,9 +20,10 @@ install: $(TARGET)
 
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	$(INSTALL) $(TARGET) $(DESTDIR)$(PREFIX)/bin/$(TARGET)
-	install -Dm644 devify.rules $(DESTDIR)/lib/udev/rules.d/99-devify.rules
-	install -d $(DESTDIR)usr/share/icons/MonoDev
-	install -Cm644 icons/* $(DESTDIR)/usr/share/icons/MonoDev
+	install -Dm644 devify.rules $(DESTDIR)$(PREFIX)/lib/udev/rules.d/99-devify.rules
+	mkdir -p $(DESTDIR)$(PREFIX)/share/icons
+	install -d $(DESTDIR)$(PREFIX)/share/icons/MonoDev
+	install -Cm644 icons/* $(DESTDIR)$(PREFIX)/share/icons/MonoDev
 
 clean:
 	$(RM) ./devify
