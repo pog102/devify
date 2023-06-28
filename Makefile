@@ -25,5 +25,10 @@ install: $(TARGET)
 	install -d $(DESTDIR)$(PREFIX)/share/icons/MonoDev
 	install -Cm644 icons/* $(DESTDIR)$(PREFIX)/share/icons/MonoDev
 
+uninstall: $(TARGET)
+	rm -rf $(DESTDIR)$(PREFIX)/bin/$(TARGET)
+	rm -rf $(DESTDIR)$(PREFIX)/share/icons/MonoDev
+	rm -rf $(DESTDIR)$(PREFIX)/lib/udev/rules.d/99-devify.rules
+
 clean:
 	$(RM) ./devify
