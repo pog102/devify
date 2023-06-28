@@ -10,7 +10,7 @@ Make sure you have the following prerequisites installed on your system:
 - libnotify
 
 ## Installation
-
+### Manual
 1. Clone the repository:
 
    ```bash
@@ -33,3 +33,8 @@ Make sure you have the following prerequisites installed on your system:
    ```bash
    sudo udevadm control --reload-rules
    ```
+### AUR
+
+```bash
+paru -S devify
+```
