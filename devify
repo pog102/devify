@@ -4,7 +4,7 @@ export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 
 status=$2
 icon_pack=/usr/local/share/icons/MonoDev
-user=$(users |  awk '{print $1}')
+user=$(who|head -n 1 |  awk '{print $1}')
 
 
 Bind_f()
