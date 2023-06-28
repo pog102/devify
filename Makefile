@@ -15,11 +15,11 @@ LFLAGS      = `$(PKG_CONFIG) --libs glib-2.0 gio-2.0`
 all: $(TARGET)
 
 install: $(TARGET)
-	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	$(INSTALL) $(TARGET) $(DESTDIR)$(PREFIX)/bin/$(TARGET)
-	install -Dm644 devify.rules $(DESTDIR)$(PREFIX)/lib/udev/rules.d/99-devify.rules
+	mkdir -p $(DESTDIR)/bin
+	$(INSTALL) $(TARGET) $(DESTDIR)/bin/$(TARGET)
+	install -Dm644 devify.rules $(DESTDIR)/lib/udev/rules.d/99-devify.rules
 	install -d $(DESTDIR)usr/share/icons/MonoDev
-	install -Cm644 icons/* $(DESTDIR)usr/share/icons/MonoDev
+	install -Cm644 icons/* $(DESTDIR)/usr/share/icons/MonoDev
 
 clean:
 	$(RM) ./devify
