@@ -1,7 +1,7 @@
 TARGET      = devify
 SRC        := src/notification.vala src/dbus.vala src/tiramisu.vala
 
-PREFIX     ?= /usr/local
+PREFIX     ?= usr/local
 INSTALL     = install -Dm755
 RM         ?= rm -f
 PKG_CONFIG ?= pkg-config
