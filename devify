@@ -3,7 +3,8 @@
 export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 
 status=$2
-icon_pack=/usr/local/share/icons/MonoDev
+# icon_pack=/usr/local/share/icons/MonoDev
+icon_pack=/home/chad/devify/icons
 user=$(users |  awk '{print $1}')
 
 
@@ -18,10 +19,12 @@ else
 
 shopt -s nocasematch
 case "$1" in
- *"Sony"* | "Wireless Controller") Bind_f "PS5 Controller" "ps5_controller" 5
+ *"Sony"* | "Wireless Controller") Bind_f "PS5 Controller" "ps5_controller" 1
   ;;
-  *"Katar"*) Bind_f "$1" "corsair" 6
+  *"Katar"*) Bind_f "$1" "corsair" 2
   ;;
-  *"Keyboard"*) Bind_f "$1" "generic_keyboard" 7
+  *"Keyboard"*) Bind_f "$1" "generic_keyboard" 3
+  ;;
+  *"Mouse"*) Bind_f "$1" "generic_mouse" 4
   ;;
 esac
