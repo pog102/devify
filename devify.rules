@@ -1,4 +1,4 @@
-SUBSYSTEM=="hid", ACTION=="bind", \
+SUBSYSTEM=="hid", ACTION=="add", \
 RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
 
 
