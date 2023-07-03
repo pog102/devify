@@ -5,6 +5,7 @@ export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 status=$2
 icon_pack=/usr/local/share/icons/MonoDev
 user=$(who|head -n 1 |  awk '{print $1}')
+wal=/home/$user/.cache/wal/colors
 
 
 Bind_f()
@@ -15,6 +16,17 @@ else
     su $user -c "notify-send -u low -r $3 -i ${icon_pack}/$2.svg '$1' 'Disconnected'"
   fi
 }
+
+# Change color by pywall
+color=$(sed -n 3p $wal)
+if test -f $wall; then
+  if [ "$color" != "$(grep -oP '#.*([A-Za-z]|[0-9])' $icon_pack/main_color.svg)" ]
+  then
+    for i in $icon_pack/*; do
+    sed -i "s/fill=\"#.*\"/fill=\"$color\"/g" "$i"
+    done
+  fi
+fi
 
 shopt -s nocasematch
 case "$1" in
