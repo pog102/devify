@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 status=$2
-icon_pack=/usr/local/share/icons/MonoDev
+icon_pack=/usr/share/icons/MonoDev
 user=$(who | head -n 1 | awk '{print $1}')
 wal_dir=/home/$user/.cache/wal/colors
 icon_color=$(grep -oP '#.*([A-Za-z]|[0-9])' $icon_pack/main_color.svg)
