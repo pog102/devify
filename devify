@@ -1,6 +1,7 @@
-#!/bin/bash
-#
-export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+#!/usr/bin/env bash
+
+DBUS_SESSION_BUS_ADDRESS=unix:path="/run/user/$(id -u)/bus"
+export DBUS_SESSION_BUS_ADDRESS
 
 status=$2
 icon_pack=/usr/local/share/icons/MonoDev
@@ -10,18 +11,18 @@ icon_color=$(grep -oP '#.*([A-Za-z]|[0-9])' $icon_pack/main_color.svg)
 
 notify() {
   if [ "$status" == "add" ]; then
-    su $user -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Connected'"
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Connected'"
   else
-    su $user -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Disconnected'"
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Disconnected'"
   fi
 }
 
 # Change color by pywall
 
-if test -f $wal_dir; then
-  color=$(sed -n 3p $wal_dir)
+if test -f "$wal_dir"; then
+  color=$(sed -n 3p "$wal_dir")
   if [ "$color" != "$icon_color" ]; then
-    for i in $icon_pack/*; do
+    for i in "$icon_pack"/*; do
       sed -i "s/fill=\"#.*\"/fill=\"$color\"/g" "$i"
     done
   fi
