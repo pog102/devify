@@ -17,9 +17,9 @@ install: $(TARGET)
 
 uninstall: $(TARGET)
 
-	rm -rf $(DESTDIR)$(PREFIX)/bin/$(TARGET)
+	rm $(DESTDIR)$(PREFIX)/bin/$(TARGET)
 	rm -rf $(DESTDIR)$(PREFIX)/share/icons/MonoDev
-	rm -rf $(DESTDIR)$(PREFIX)/lib/udev/rules.d/99-devify.rules
+	rm $(DESTDIR)$(PREFIX)/lib/udev/rules.d/99-devify.rules
 
 clean:
 	$(RM) ./devify
