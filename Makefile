@@ -1,6 +1,6 @@
 TARGET      = devify
 
-PREFIX     ?= /usr
+PREFIX     ?= /usr/local
 INSTALL     = install -Dm755
 RM         ?= rm -f
 
