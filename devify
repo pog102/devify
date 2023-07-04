@@ -41,6 +41,9 @@ case "$1" in
 *"Mouse"* | *"Logitech MX"*)
   notify "$1" "generic_mouse"
   ;;
+*"X-Box"*)
+  notify "X-Box Controller" "xbox_controller"
+  ;;
 *)
   notify "$1" ""
   ;;
