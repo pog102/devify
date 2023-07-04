@@ -4,7 +4,7 @@ PREFIX     ?= /usr
 INSTALL     = install -Dm755
 RM         ?= rm -f
 
-DESTINATIONUDEV = $(DESTDIR)/etc/udev/rules.d/
+DESTINATIONUDEV = $(DESTDIR)/lib/udev/rules.d/
 DESTINATIONBIN = $(DESTDIR)$(PREFIX)/bin/
 
 all: $(TARGET)
