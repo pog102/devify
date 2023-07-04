@@ -30,8 +30,14 @@ fi
 
 shopt -s nocasematch
 case "$1" in
-*"Sony"* | "Wireless Controller")
+*"DualSense"*)
   notify "PS5 Controller" "ps5_controller"
+  ;;
+*"DualShock"*)
+  notify "PS4 Controller" "ps4_controller"
+  ;;
+*"Switch Pro"*) # this might be wrong, so please feel free to change it
+  notify "Nintendo Switch Pro Controller" "switch_pro_controller"
   ;;
 *"Katar"*)
   notify "$1" "corsair"
