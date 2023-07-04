@@ -1,6 +1,4 @@
-#!/bin/bash
-#
-export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+#!/usr/bin/env bash
 
 status=$2
 icon_pack=/usr/local/share/icons/MonoDev
@@ -8,20 +6,23 @@ user=$(who | head -n 1 | awk '{print $1}')
 wal_dir=/home/$user/.cache/wal/colors
 icon_color=$(grep -oP '#.*([A-Za-z]|[0-9])' $icon_pack/main_color.svg)
 
+DBUS_SESSION_BUS_ADDRESS=unix:path="/run/user/$( id -u "$user" )/bus"
+export DBUS_SESSION_BUS_ADDRESS
+
 notify() {
   if [ "$status" == "add" ]; then
-    su $user -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Connected'"
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Connected'"
   else
-    su $user -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Disconnected'"
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Disconnected'"
   fi
 }
 
 # Change color by pywall
 
-if test -f $wal_dir; then
-  color=$(sed -n 3p $wal_dir)
+if test -f "$wal_dir"; then
+  color=$(sed -n 3p "$wal_dir")
   if [ "$color" != "$icon_color" ]; then
-    for i in $icon_pack/*; do
+    for i in "$icon_pack"/*; do
       sed -i "s/fill=\"#.*\"/fill=\"$color\"/g" "$i"
     done
   fi
@@ -29,8 +30,14 @@ fi
 
 shopt -s nocasematch
 case "$1" in
-*"Sony"* | "Wireless Controller")
+*"DualSense"*)
   notify "PS5 Controller" "ps5_controller"
+  ;;
+*"DualShock"*)
+  notify "PS4 Controller" "ps4_controller"
+  ;;
+*"Switch Pro"*) # this might be wrong, so please feel free to change it
+  notify "Nintendo Switch Pro Controller" "switch_pro_controller"
   ;;
 *"Katar"*)
   notify "$1" "corsair"
@@ -40,6 +47,12 @@ case "$1" in
   ;;
 *"Mouse"* | *"Logitech MX"*)
   notify "$1" "generic_mouse"
+  ;;
+*"X-Box"*)
+  notify "X-Box Controller" "xbox_controller"
+  ;;
+*"Yubico Yubikey"*)
+  notify "Yubikey" "yubikey"
   ;;
 *)
   notify "$1" ""

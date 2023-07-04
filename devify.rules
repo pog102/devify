@@ -1,6 +1,17 @@
 SUBSYSTEM=="hid", ACTION=="add", \
 RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
 
-
 SUBSYSTEM=="hid", ACTION=="remove", \
 RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
+
+# These are for xbox controller that, for some reason* don't use the hid 
+# SUBSYSTEM, but rather the input SUBSYSTEM
+# *: At least in my machine (running Gentoo, date: July 2023)
+SUBSYSTEM=="input", ACTION=="add", \
+RUN+="/usr/bin/devify '$env{NAME}' '$env{ACTION}'"
+
+
+SUBSYSTEM=="input", ACTION=="remove", \
+RUN+="/usr/bin/devify '$env{NAME}' '$env{ACTION}'"
+
+

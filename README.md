@@ -9,7 +9,7 @@ Make sure you have the following prerequisites installed on your system:
 
 - libnotify
 
-## Installation
+## 📦 Installation
 ### Manual
 1. Clone the repository:
 

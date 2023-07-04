@@ -7,6 +7,7 @@ RM         ?= rm -f
 DESTINATIONUDEV = $(DESTDIR)/lib/udev/rules.d/
 DESTINATIONBIN = $(DESTDIR)$(PREFIX)/bin/
 
+
 all: $(TARGET)
 
 install: $(TARGET)
