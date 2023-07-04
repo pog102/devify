@@ -44,6 +44,9 @@ case "$1" in
 *"X-Box"*)
   notify "X-Box Controller" "xbox_controller"
   ;;
+*"Yubico Yubikey"*)
+  notify "Yubikey" "yubikey"
+  ;;
 *)
   notify "$1" ""
   ;;
