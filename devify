@@ -6,7 +6,7 @@ status=$2
 icon_pack=/usr/local/share/icons/MonoDev
 user=$(who | head -n 1 | awk '{print $1}')
 wal_dir=/home/$user/.cache/wal/colors
-icon_color=$(grep -oP '#.*([A-Za-z]|[0-9])' $icon_pack/main_color.svg)
+#icon_color=$(grep -oP '#.*([A-Za-z]|[0-9])' $icon_pack/main_color.svg)
 
 notify() {
   if [ "$status" == "add" ]; then
@@ -41,9 +41,8 @@ case "$1" in
 *"Mouse"* | *"Logitech MX"*)
   notify "$1" "generic_mouse"
   ;;
-*)
 *"X-Box"*)
-  notify "$1" "X-Box Controller" "xbox_controller"
+  notify "X-Box Controller" "xbox_controller"
   ;;
 *)
   notify "$1" ""
