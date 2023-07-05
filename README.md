@@ -1,5 +1,4 @@
-# Devify [![Licence](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Paypal Donate](https://img.shields.io/badge/Donate-Paypal-2244dd.svg)](https://www.paypal.com/paypalme/ernisD)   [![AUR version](https://img.shields.io/aur/version/devify)](https://aur.archlinux.org/packages/devify)[![Overlay](https://www.gentoo.org/assets/img/badges/gentoo-badge2.png](https://github.com/lima-limon-inc/lemon-lime-overlay)]
-![notification](https://raw.githubusercontent.com/pog102/devify/main/preview.png)
+# Devify [![Licence](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Paypal Donate](https://img.shields.io/badge/Donate-Paypal-2244dd.svg)](https://www.paypal.com/paypalme/ernisD)   [![AUR version](https://img.shields.io/aur/version/devify)](https://aur.archlinux.org/packages/devify)
 <br>
 Devify is a device notification system that utilizes udev rules to monitor device connections and disconnections. It provides notifications when a device is connected or disconnected from Bluetooth and when it is plugged or unplugged from USB.
 
