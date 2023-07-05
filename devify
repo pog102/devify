@@ -11,9 +11,9 @@ export DBUS_SESSION_BUS_ADDRESS
 
 notify() {
   if [ "$status" == "add" ]; then
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Connected'"
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Connected'"
   else
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg '$1' 'Disconnected'"
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Disconnected'"
   fi
 }
 
