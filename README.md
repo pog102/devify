@@ -55,3 +55,8 @@ emerge --ask devify
 
 ## Credits:
 - [Flaticon](https://www.flaticon.com/free-icon/webcam_5480222#) for the webcam icon
+- [thenounproject](https://thenounproject.com/icon/gaming-mouse-1554876)  for the mouse icon
+- [thenounproject](https://thenounproject.com/icon/xbox-one-controller-195039)  for the Xbox Controller icon
+- [thenounproject](https://thenounproject.com/icon/game-controller-194080/)  for the PS4 Controller icon
+- [thenounproject](https://thenounproject.com/icon/ps5-controller-4239781/)  for the PS5 COntroller icon
+
