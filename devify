@@ -54,6 +54,9 @@ case "$1" in
 *"Yubico Yubikey"*)
   notify "Yubikey" "yubikey"
   ;;
+*"Cam"*)
+  notify "Webcam" "webcam"
+  ;;
 *)
   notify "$1" ""
   ;;
