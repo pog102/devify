@@ -52,3 +52,6 @@ emerge --ask devify
 
 ## Features
 - [pywal](https://github.com/dylanaraps/pywal) support
+
+## Credits:
+- [Flaticon](https://www.flaticon.com/free-icon/webcam_5480222#) for the webcam icon
