@@ -37,5 +37,17 @@ Make sure you have the following prerequisites installed on your system:
 ```bash
 paru -S devify
 ```
+### Gentoo
+First, enable the lemon-lime-overlay
+```bash
+eselect repository add lemon-lime-overlay git https://github.com/lima-limon-inc/lemon-lime-overlay.git
+emaint sync -r lemon-lime-overlay
+```
+Then, install the package
+```bash
+emerge --ask devify
+
+```
+
 ## Features
 - [pywal](https://github.com/dylanaraps/pywal) support
