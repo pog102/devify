@@ -36,8 +36,8 @@ case "$1" in
 *"DualShock"*)
   notify "PS4 Controller" "ps4_controller"
   ;;
-*"Switch Pro"*) # this might be wrong, so please feel free to change it
-  notify "Nintendo Switch Pro Controller" "switch_pro_controller"
+*"Pro Controller"*)
+  notify "Pro Controller" "switch_pro_controller"
   ;;
 *"Katar"*)
   notify "$1" "corsair"
@@ -48,8 +48,8 @@ case "$1" in
 *"Mouse"* | *"Logitech MX"*)
   notify "$1" "generic_mouse"
   ;;
-*"X-Box"*)
-  notify "X-Box Controller" "xbox_controller"
+*"X-Box"* | *"Xbox"*)
+  notify "Xbox Controller" "xbox_controller"
   ;;
 *"Yubico Yubikey"*)
   notify "Yubikey" "yubikey"
