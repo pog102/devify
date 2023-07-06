@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+device_name=$1
+# remove underscores for device IDs
+if [[ "$device_name" == *":"* ]]; then
+  # keep device type prefix intact
+  device_name="${device_name%:*}:$(echo "${device_name#*:}" | tr '_' ' ')"
+else
+  device_name="${device_name//_/ }"
+fi
+
 status=$2
 icon_pack=/usr/local/share/icons/MonoDev
 user=$(who | head -n 1 | awk '{print $1}')
@@ -11,9 +20,11 @@ export DBUS_SESSION_BUS_ADDRESS
 
 notify() {
   if [ "$status" == "add" ]; then
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Connected'"
-  else
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Disconnected'"
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$device_name' 'Connected'"
+  fi
+
+  if [ "$status" == "remove" ]; then
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$device_name' 'Disconnected'"
   fi
 }
 
@@ -29,35 +40,41 @@ if test -f "$wal_dir"; then
 fi
 
 shopt -s nocasematch
-case "$1" in
-*"DualSense"*)
-  notify "PS5 Controller" "ps5_controller"
-  ;;
-*"DualShock"*)
-  notify "PS4 Controller" "ps4_controller"
-  ;;
-*"Pro Controller"*)
-  notify "Pro Controller" "switch_pro_controller"
-  ;;
-*"Katar"*)
-  notify "$1" "corsair"
-  ;;
-*"Keyboard"*)
-  notify "$1" "generic_keyboard"
-  ;;
-*"Mouse"* | *"Logitech MX"*)
-  notify "$1" "generic_mouse"
-  ;;
-*"X-Box"* | *"Xbox"*)
-  notify "Xbox Controller" "xbox_controller"
-  ;;
-*"Yubico Yubikey"*)
-  notify "Yubikey" "yubikey"
-  ;;
-*"Cam"*)
-  notify "Webcam" "webcam"
-  ;;
-*)
-  notify "$1" ""
+case "$device_name" in
+  *"DualSense"*)
+    notify "PS5 Controller" "ps5_controller"
+    ;;
+  *"DualShock"*)
+    notify "PS4 Controller" "ps4_controller"
+    ;;
+  *"Pro Controller"*)
+    notify "Pro Controller" "switch_pro_controller"
+    ;;
+  *"Katar"*)
+    notify "$device_name" "corsair"
+    ;;
+  *"Keyboard"*)
+    notify "$device_name" "generic_keyboard"
+    ;;
+  *"Mouse"* | *"Logitech MX"*)
+    notify "$device_name" "generic_mouse"
+    ;;
+  *"X-Box"* | *"Xbox"*)
+    notify "Xbox Controller" "xbox_controller"
+    ;;
+  *"Yubico Yubikey"*)
+    notify "Yubikey" "yubikey"
+    ;;
+  *"Cam"*)
+    notify "Webcam" "webcam"
+    ;;
+  *"usb_drive"*)
+    # remove custom prefix set from udev rule
+    device_name=${device_name#*:}
+    # special serial device definitions here
+    notify "$device_name" "usb_drive"
+    ;;
+  *)
+    notify "$device_name" ""
   ;;
 esac

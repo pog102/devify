@@ -10,3 +10,7 @@ RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
 # so use ID_MODEL
 ACTION=="add|remove", SUBSYSTEM=="input", ENV{ID_TYPE}!="hid", \
 RUN+="/usr/local/bin/devify \"$env{ID_MODEL}\" \"$env{ACTION}\""
+
+# Flash drive
+ACTION=="add|remove", SUBSYSTEM=="block", ENV{DEVNAME}=="/dev/sd?", \
+RUN+="/usr/local/bin/devify \"usb_drive:$env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\""
