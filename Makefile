@@ -17,12 +17,15 @@ install: $(TARGET)
 	install -Dm644 devify.rules $(DESTINATIONUDEV)99-devify.rules
 	mkdir -p $(DESTDIR)$(PREFIX)/share/icons
 	install -d $(DESTDIR)$(PREFIX)/share/icons/MonoDev
+	install -d $(DESTDIR)$(PREFIX)/share/sounds/MonoDev
 	install -Cm644 icons/* $(DESTDIR)$(PREFIX)/share/icons/MonoDev
+	install -Cm644 sounds/* $(DESTDIR)$(PREFIX)/share/sounds/MonoDev
 
 uninstall: $(TARGET)
 
 	rm $(DESTINATIONBIN)$(TARGET)
 	rm -rf $(DESTDIR)$(PREFIX)/share/icons/MonoDev
+	rm -rf $(DESTDIR)$(PREFIX)/share/sounds/MonoDev
 	rm $(DESTINATIONUDEV)99-devify.rules
 
 clean:

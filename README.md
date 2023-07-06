@@ -8,6 +8,7 @@ Devify is a device notification system that utilizes udev rules to monitor devic
 Make sure you have the following prerequisites installed on your system:
 
 - libnotify
+- libcanberra
 
 ## 📦 Installation
 ### Manual
@@ -63,4 +64,5 @@ emerge --ask devify
 - [Arduino.cc](https://www.arduino.cc/en/trademark/) for the Arduino icon
 - [Google LLC.](https://developer.android.com/legal.html) for the Android icon
 - [CamelNotation / Wikimedia Commons / Public Domain](https://commons.wikimedia.org/wiki/File:USB_flash_drive_icon.svg) for the flash drive icon
+- [SoundsForYou / Pixabay / Creative Commons](https://pixabay.com/sound-effects/notifications-sound-127856/) for the add/remove sound effects
 
