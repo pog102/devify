@@ -45,7 +45,7 @@ case "$1" in
 *"Keyboard"*)
   notify "$1" "generic_keyboard"
   ;;
-*"Mouse"* | *"Logitech MX"*)
+*"Mouse"* | *"Logitech MX"* | *"MX Master"*)
   notify "$1" "generic_mouse"
   ;;
 *"X-Box"* | *"Xbox"*)
