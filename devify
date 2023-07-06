@@ -71,8 +71,12 @@ case "$device_name" in
   *"usb_drive"*)
     # remove custom prefix set from udev rule
     device_name=${device_name#*:}
-    # special serial device definitions here
     notify "$device_name" "usb_drive"
+    ;;
+  *"android_device"*)
+    # remove custom prefix set from udev rule
+    device_name=${device_name#*:}
+    notify "$device_name" "android"
     ;;
   *)
     notify "$device_name" ""
