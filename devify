@@ -56,7 +56,7 @@ case "$device_name" in
   *"Keyboard"*)
     notify "$device_name" "generic_keyboard"
     ;;
-  *"Mouse"* | *"Logitech MX"*)
+  *"Mouse"* | *"Logitech MX"* | *"MX Master"*)
     notify "$device_name" "generic_mouse"
     ;;
   *"X-Box"* | *"Xbox"*)
