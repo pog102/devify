@@ -18,3 +18,8 @@ RUN+="/usr/local/bin/devify \"usb_drive:$env{ID_MODEL} ($env{ID_VENDOR})\" \"$en
 # Android device
 ACTION=="add|remove", SUBSYSTEM=="usb", ENV{DEVLINKS}=="/dev/android*", \
 RUN+="/usr/local/bin/devify \"android_device:$env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\""
+
+# USB serial device, those tend to have some random numeric NAMEs so
+# use database info instead, tested with Arduino and PIC K150 Programmer
+ACTION=="add|remove", SUBSYSTEM=="tty", ENV{DEVLINKS}=="/dev/serial*", \
+RUN+="/usr/local/bin/devify \"serial_device:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\""

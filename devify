@@ -78,6 +78,19 @@ case "$device_name" in
     device_name=${device_name#*:}
     notify "$device_name" "android"
     ;;
+  *"serial_device"*)
+    # remove custom prefix set from udev rule
+    device_name=${device_name#*:}
+    # special serial device definitions here
+    case "$device_name" in
+      *"Arduino"*)
+        notify "$device_name" "arduino"
+        ;;
+      *)
+        notify "$device_name" "generic_serial"
+        ;;
+    esac
+    ;;
   *)
     notify "$device_name" ""
   ;;
