@@ -23,3 +23,10 @@ RUN+="/usr/local/bin/devify \"android_device:$env{ID_MODEL} ($env{ID_VENDOR})\" 
 # use database info instead, tested with Arduino and PIC K150 Programmer
 ACTION=="add|remove", SUBSYSTEM=="tty", ENV{DEVLINKS}=="/dev/serial*", \
 RUN+="/usr/local/bin/devify \"serial_device:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\""
+
+# Power adapter
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", ENV{POWER_SUPPLY_TYPE}=="Mains", ACTION=="change", \
+RUN+="/usr/local/bin/devify \"power_adapter:Power Adapter ($env{POWER_SUPPLY_NAME})\" add"
+
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="0", ENV{POWER_SUPPLY_TYPE}=="Mains", ACTION=="change", \
+RUN+="/usr/local/bin/devify \"power_adapter:Power Adapter ($env{POWER_SUPPLY_NAME})\" remove"
