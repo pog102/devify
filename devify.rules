@@ -11,9 +11,9 @@ RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
 ACTION=="add|remove", SUBSYSTEM=="input", ENV{ID_TYPE}!="hid", \
 RUN+="/usr/local/bin/devify \"$env{ID_MODEL}\" \"$env{ACTION}\""
 
-# Flash drive
+# Removable drive
 ACTION=="add|remove", SUBSYSTEM=="block", ENV{DEVNAME}=="/dev/sd?", \
-RUN+="/usr/local/bin/devify \"usb_drive:$env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\""
+RUN+="/usr/local/bin/devify \"removable_drive:$env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\""
 
 # Android device
 ACTION=="add|remove", SUBSYSTEM=="usb", ENV{DEVLINKS}=="/dev/android*", \

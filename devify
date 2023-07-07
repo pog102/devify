@@ -78,18 +78,16 @@ case "$device_name" in
   *"Cam"*)
     notify "Webcam" "webcam"
     ;;
-  *"usb_drive"*)
+  *"removable_drive"*)
     # remove custom prefix set from udev rule
     device_name=${device_name#*:}
-    notify "$device_name" "usb_drive"
+    notify "$device_name" "removable_drive"
     ;;
   *"android_device"*)
-    # remove custom prefix set from udev rule
     device_name=${device_name#*:}
     notify "$device_name" "android"
     ;;
   *"serial_device"*)
-    # remove custom prefix set from udev rule
     device_name=${device_name#*:}
     # special serial device definitions here
     case "$device_name" in
@@ -102,7 +100,6 @@ case "$device_name" in
     esac
     ;;
   *"power_adapter"*)
-    # remove custom prefix set from udev rule
     device_name=${device_name#*:}
     # keep track of the online status because the rule may be triggered multiple times
     if [ "$status" == "add" ]; then
@@ -118,7 +115,6 @@ case "$device_name" in
     fi
     ;;
   *"sound_card"*)
-    # remove custom prefix set from udev rule
     device_name=${device_name#*:}
     notify "$device_name" "sound_card"
     ;;
