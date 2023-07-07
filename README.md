@@ -60,4 +60,4 @@ emerge --ask devify
 - [thenounproject](https://thenounproject.com/icon/xbox-one-controller-195039)  for the Xbox Controller icon
 - [thenounproject](https://thenounproject.com/icon/game-controller-194080/)  for the PS4 Controller icon
 - [thenounproject](https://thenounproject.com/icon/ps5-controller-4239781/)  for the PS5 COntroller icon
-
+- [SoundsForYou / Pixabay / Creative Commons](https://pixabay.com/sound-effects/notifications-sound-127856/) for the add/remove sound effects
