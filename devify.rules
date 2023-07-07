@@ -30,3 +30,10 @@ RUN+="/usr/local/bin/devify \"power_adapter:Power Adapter ($env{POWER_SUPPLY_NAM
 
 SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="0", ENV{POWER_SUPPLY_TYPE}=="Mains", ACTION=="change", \
 RUN+="/usr/local/bin/devify \"power_adapter:Power Adapter ($env{POWER_SUPPLY_NAME})\" remove"
+
+# Sound cards
+ACTION=="remove", SUBSYSTEM=="sound", ENV{SOUND_INITIALIZED}=="1", \
+RUN+="/usr/local/bin/devify \"sound_card:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\""
+
+ACTION=="change", SUBSYSTEM=="sound", ENV{SOUND_INITIALIZED}=="1", \
+RUN+="/usr/local/bin/devify \"sound_card:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"add\""

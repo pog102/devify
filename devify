@@ -108,6 +108,11 @@ case "$device_name" in
         fi
     fi
     ;;
+  *"sound_card"*)
+    # remove custom prefix set from udev rule
+    device_name=${device_name#*:}
+    notify "$device_name" "sound_card"
+    ;;
   *)
     notify "$device_name" ""
   ;;
