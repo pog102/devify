@@ -8,6 +8,7 @@ Devify is a device notification system that utilizes udev rules to monitor devic
 Make sure you have the following prerequisites installed on your system:
 
 - libnotify
+- libcanberra
 
 ## 📦 Installation
 ### Manual
