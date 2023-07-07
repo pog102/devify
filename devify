@@ -11,20 +11,29 @@ fi
 
 status=$2
 icon_pack=/usr/local/share/icons/MonoDev
+sound_pack=/usr/local/share/sounds/MonoDev
 user=$(who | head -n 1 | awk '{print $1}')
+uid=$( id -u "$user" )
 wal_dir=/home/$user/.cache/wal/colors
 icon_color=$(grep -oP '#.*([A-Za-z]|[0-9])' $icon_pack/main_color.svg)
 POWER_ADAPTER_STATUS="/var/run/devify_power_adapter_status"
 
-DBUS_SESSION_BUS_ADDRESS=unix:path="/run/user/$( id -u "$user" )/bus"
+DBUS_SESSION_BUS_ADDRESS=unix:path="/run/user/$uid/bus"
 export DBUS_SESSION_BUS_ADDRESS
+# required by Libcanberra
+XDG_RUNTIME_DIR=/run/user/$uid
+export XDG_RUNTIME_DIR
+export DISPLAY=:0
+export WAYLAND_DISPLAY=wayland-0
 
 notify() {
   if [ "$status" == "add" ]; then
+    su "$user" -c "canberra-gtk-play -f ${sound_pack}/add.oga -i 'Devify' -d 'Connected'" &
     su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Connected'"
   fi
 
   if [ "$status" == "remove" ]; then
+    su "$user" -c "canberra-gtk-play -f ${sound_pack}/remove.oga -i 'Devify' -d 'Disconnected'" &
     su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Disconnected'"
   fi
 }
