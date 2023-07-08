@@ -41,14 +41,10 @@ RUN+="/usr/local/bin/devify \"sound_card:$env{ID_MODEL_FROM_DATABASE} ($env{ID_V
 # Network adapters / usb thethering
 # Devices not in db
 ACTION=="add|remove", SUBSYSTEM=="net", ENV{ID_MODEL}!="", \
-RUN+="/usr/local/bin/devify \"network_adapter:$env{INTERFACE} - $env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\"", GOTO="end_lookup"
-# Devices in db
-ACTION=="add|remove", SUBSYSTEM=="net", ENV{ID_MODEL}==""\
-RUN+="/usr/local/bin/devify \"network_adapter:$env{INTERFACE} - $env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\"", GOTO="end_lookup"
-
-# Android tethering moves after connecting
-ACTION=="move", SUBSYSTEM=="net", ENV{ID_MODEL}!="", \
-RUN+="/usr/local/bin/devify \"network_adapter:$env{INTERFACE} - $env{ID_MODEL} ($env{ID_VENDOR})\" add", GOTO="end_lookup"
+RUN+="/usr/local/bin/devify \"network_adapter:Network adapter - $env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\"", GOTO="end_lookup"
+# Devices in db (most on board controllers fall in this category)
+ACTION=="add|remove", SUBSYSTEM=="net", ENV{ID_MODEL}=="", \
+RUN+="/usr/local/bin/devify \"network_adapter:Network adapter - $env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\"", GOTO="end_lookup"
 
 # Try to avoid matching more than one rule per udev event
 # Calling GOTO="end_lookup" in each rule
