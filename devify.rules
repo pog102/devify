@@ -16,7 +16,7 @@ ACTION=="add|remove", SUBSYSTEM=="block", ENV{DEVNAME}=="/dev/sd?", \
 RUN+="/usr/local/bin/devify \"removable_drive:$env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\""
 
 # Android device
-ACTION=="add|remove", SUBSYSTEM=="usb", ENV{DEVLINKS}=="/dev/android*", \
+ACTION=="add|remove", SUBSYSTEM=="usb", ENV{DEVLINKS}=="*android_adb*|*android_fastboot*", \
 RUN+="/usr/local/bin/devify \"android_device:$env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\""
 
 # USB serial device, those tend to have some random numeric NAMEs so
