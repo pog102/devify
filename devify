@@ -118,6 +118,10 @@ case "$device_name" in
     device_name=${device_name#*:}
     notify "$device_name" "sound_card"
     ;;
+  *"network_adapter"*)
+    device_name=${device_name#*:}
+    notify "$device_name" "network_adapter"
+    ;;
   *)
     notify "$device_name" ""
   ;;

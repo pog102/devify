@@ -36,4 +36,16 @@ ACTION=="remove", SUBSYSTEM=="sound", ENV{SOUND_INITIALIZED}=="1", \
 RUN+="/usr/local/bin/devify \"sound_card:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\""
 
 ACTION=="change", SUBSYSTEM=="sound", ENV{SOUND_INITIALIZED}=="1", \
-RUN+="/usr/local/bin/devify \"sound_card:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"add\""
+RUN+="/usr/local/bin/devify \"sound_card:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" add"
+
+# Network adapters / usb thethering
+# Devices not in db
+ACTION=="add|remove", SUBSYSTEM=="net", ENV{ID_MODEL}!="", \
+RUN+="/usr/local/bin/devify \"network_adapter:$env{INTERFACE} - $env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\""
+# Devices in db
+ACTION=="add|remove", SUBSYSTEM=="net", ENV{ID_MODEL}==""\
+RUN+="/usr/local/bin/devify \"network_adapter:$env{INTERFACE} - $env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\""
+
+# Android tethering moves after connecting
+ACTION=="move", SUBSYSTEM=="net", ENV{ID_MODEL}!="", \
+RUN+="/usr/local/bin/devify \"network_adapter:$env{INTERFACE} - $env{ID_MODEL} ($env{ID_VENDOR})\" add"
