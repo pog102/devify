@@ -1,17 +1,52 @@
-SUBSYSTEM=="hid", ACTION=="add", \
-RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
-
-SUBSYSTEM=="hid", ACTION=="remove", \
-RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\""
+SUBSYSTEM=="hid", ACTION=="add|remove", \
+RUN+="/usr/local/bin/devify \"$env{HID_NAME}\" \"$env{ACTION}\"", GOTO="end_lookup"
 
 # These are for xbox controller that, for some reason* don't use the hid 
 # SUBSYSTEM, but rather the input SUBSYSTEM
 # *: At least in my machine (running Gentoo, date: July 2023)
-SUBSYSTEM=="input", ACTION=="add", \
-RUN+="/usr/bin/devify '$env{NAME}' '$env{ACTION}'"
+#
+# Target only input devices that are not of hid type, this will hopefully help
+# prevent repeated notificatios, also for some reason NAME doesn't work here
+# so use ID_MODEL
+ACTION=="add|remove", SUBSYSTEM=="input", ENV{ID_TYPE}!="hid", \
+RUN+="/usr/local/bin/devify \"$env{ID_MODEL}\" \"$env{ACTION}\"", GOTO="end_lookup"
 
+# Removable drive
+ACTION=="add|remove", SUBSYSTEM=="block", ENV{DEVNAME}=="/dev/sd?", \
+RUN+="/usr/local/bin/devify \"removable_drive:$env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\"", GOTO="end_lookup"
 
-SUBSYSTEM=="input", ACTION=="remove", \
-RUN+="/usr/bin/devify '$env{NAME}' '$env{ACTION}'"
+# Android device
+ACTION=="add|remove", SUBSYSTEM=="usb", ENV{DEVLINKS}=="*android_adb*|*android_fastboot*", \
+RUN+="/usr/local/bin/devify \"android_device:$env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\"", GOTO="end_lookup"
 
+# USB serial device, those tend to have some random numeric NAMEs so
+# use database info instead, tested with Arduino and PIC K150 Programmer
+ACTION=="add|remove", SUBSYSTEM=="tty", ENV{DEVLINKS}=="/dev/serial*", \
+RUN+="/usr/local/bin/devify \"serial_device:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\"", GOTO="end_lookup"
 
+# Power adapter
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", ENV{POWER_SUPPLY_TYPE}=="Mains", ACTION=="change", \
+RUN+="/usr/local/bin/devify \"power_adapter:Power Adapter ($env{POWER_SUPPLY_NAME})\" add", GOTO="end_lookup"
+
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="0", ENV{POWER_SUPPLY_TYPE}=="Mains", ACTION=="change", \
+RUN+="/usr/local/bin/devify \"power_adapter:Power Adapter ($env{POWER_SUPPLY_NAME})\" remove", GOTO="end_lookup"
+
+# # Sound cards
+ACTION=="remove", SUBSYSTEM=="sound", ENV{SOUND_INITIALIZED}=="1", \
+RUN+="/usr/local/bin/devify \"sound_card:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\"", GOTO="end_lookup"
+
+ACTION=="change", SUBSYSTEM=="sound", ENV{SOUND_INITIALIZED}=="1", \
+RUN+="/usr/local/bin/devify \"sound_card:$env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" add", GOTO="end_lookup"
+
+# Network adapters / usb thethering
+# Devices not in db
+ACTION=="add|remove", SUBSYSTEM=="net", ENV{ID_MODEL}!="", \
+RUN+="/usr/local/bin/devify \"network_adapter:Network adapter - $env{ID_MODEL} ($env{ID_VENDOR})\" \"$env{ACTION}\"", GOTO="end_lookup"
+# Devices in db (most on board controllers fall in this category)
+ACTION=="add|remove", SUBSYSTEM=="net", ENV{ID_MODEL}=="", \
+RUN+="/usr/local/bin/devify \"network_adapter:Network adapter - $env{ID_MODEL_FROM_DATABASE} ($env{ID_VENDOR_FROM_DATABASE})\" \"$env{ACTION}\"", GOTO="end_lookup"
+
+# Try to avoid matching more than one rule per udev event
+# Calling GOTO="end_lookup" in each rule
+# This should always be at the end of this file!
+LABEL="end_lookup"

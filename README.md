@@ -60,4 +60,9 @@ emerge --ask devify
 - [thenounproject](https://thenounproject.com/icon/xbox-one-controller-195039)  for the Xbox Controller icon
 - [thenounproject](https://thenounproject.com/icon/game-controller-194080/)  for the PS4 Controller icon
 - [thenounproject](https://thenounproject.com/icon/ps5-controller-4239781/)  for the PS5 COntroller icon
+- [freesvg / Public Domain](https://freesvg.org/1482104496) for the generic serial icon
+- [Arduino.cc](https://www.arduino.cc/en/trademark/) for the Arduino icon
+- [Google LLC.](https://developer.android.com/legal.html) for the Android icon
+- [CamelNotation / Wikimedia Commons / Public Domain](https://commons.wikimedia.org/wiki/File:USB_flash_drive_icon.svg) for the flash drive icon
 - [SoundsForYou / Pixabay / Creative Commons](https://pixabay.com/sound-effects/notifications-sound-127856/) for the add/remove sound effects
+- [Google LLC. / Pictogrammers](https://pictogrammers.com/library/mdi/) for the battery,sound card,network adapter icons

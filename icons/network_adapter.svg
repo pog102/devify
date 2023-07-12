@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="network_cotroller.svg"
+   width="128"
+   height="128"
+   fill="#d0d0d0"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="3.170932"
+     inkscape:cx="-53.138951"
+     inkscape:cy="84.360056"
+     inkscape:window-width="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     d="M 18.752,18.752 C 7.168,30.336 0,46.336 0,64 0,81.664 7.168,97.664 18.752,109.248 l 9.024,-9.024 C 18.496,91.008 12.8,78.208 12.8,64 12.8,49.856 18.496,36.992 27.776,27.776 l -9.024,-9.024 m 90.496,0 -9.024,9.024 c 9.28,9.216 14.976,22.08 14.976,36.224 0,14.208 -5.696,27.008 -14.976,36.224 l 9.024,9.024 C 120.832,97.664 128,81.664 128,64 128,46.336 120.832,30.336 109.248,18.752 M 36.864,36.864 C 29.888,43.84 25.6,53.44 25.6,64 c 0,10.56 4.288,20.16 11.264,27.136 l 9.024,-9.024 C 41.28,77.504 38.4,71.104 38.4,64 c 0,-7.104 2.88,-13.504 7.488,-18.112 l -9.024,-9.024 m 54.272,0 -9.024,9.024 C 86.72,50.496 89.6,56.896 89.6,64 c 0,7.104 -2.88,13.504 -7.488,18.112 l 9.024,9.024 C 98.112,84.16 102.4,74.56 102.4,64 102.4,53.44 98.112,43.84 91.136,36.864 M 64,51.2 A 12.8,12.8 0 0 0 51.2,64 12.8,12.8 0 0 0 64,76.8 12.8,12.8 0 0 0 76.8,64 12.8,12.8 0 0 0 64,51.2 Z"
+     id="path2"
+     style="stroke-width:6.4" />
+</svg>
