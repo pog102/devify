@@ -3,23 +3,23 @@
 
 # Input device
 SUBSYSTEM=="input", ACTION=="add|remove", ENV{DEVLINKS}!="" \
-ENV{DEVIFY_TYPE}="input_device", \
+ENV{DEVIFY_TYPE}="input_device", ENV{DEVIFY_DESC}="Input device", \
 RUN+="/usr/local/bin/devify" GOTO="end_lookup"
 
 # Removable drive
 SUBSYSTEM=="block", ENV{DEVNAME}=="/dev/sd?", ACTION=="add|remove", \
-ENV{DEVIFY_TYPE}="removable_drive", \
+ENV{DEVIFY_TYPE}="removable_drive", ENV{DEVIFY_DESC}="Removable drive", \
 RUN+="/usr/local/bin/devify" GOTO="end_lookup"
 
 # Android device
 SUBSYSTEM=="usb", ENV{ID_VENDOR_FROM_DATABASE}=="Google Inc.", \
 ENV{ID_MODEL_FROM_DATABASE}=="Nexus/Pixel Device*", ACTION=="add|remove" \
-ENV{DEVIFY_TYPE}="android_device", \
+ENV{DEVIFY_TYPE}="android_device" , ENV{DEVIFY_DESC}="Android device", \
 RUN+="/usr/local/bin/devify" GOTO="end_lookup"
 
 # USB serial device, tested with Arduino and PIC K150 Programmer
 SUBSYSTEM=="tty", ENV{DEVLINKS}=="/dev/serial*", ACTION=="add|remove", \
-ENV{DEVIFY_TYPE}="serial_device", \
+ENV{DEVIFY_TYPE}="serial_device", ENV{DEVIFY_DESC}="Serial device", \
 RUN+="/usr/local/bin/devify" GOTO="end_lookup"
 
 # Power adapter
