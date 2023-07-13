@@ -224,9 +224,9 @@ elif [[ -n "$device_name" ]] && [[ "$ACTION" == "remove" ]]; then
 fi
 
 if [[ "$event_handled" == 1 ]];then
-  echo -e "$(date -u '+%Y-%m-%d %H:%M:%S.%3N') [I] $device_name $ACTION - Handled\n" >> /tmp/devify-event.log
+  echo "$(date -u '+%Y-%m-%d %H:%M:%S.%3N') [I] $device_name $ACTION - Handled" >> /tmp/devify-event.log
 else
-  echo -e "$(date -u '+%Y-%m-%d %H:%M:%S.%3N') [D] $device_name $ACTION - Ignored\n" >> /tmp/devify-event.log
+  echo "$(date -u '+%Y-%m-%d %H:%M:%S.%3N') [D] $device_name $ACTION - Ignored" >> /tmp/devify-event.log
 fi
 
 # Update file
