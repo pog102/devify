@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-icon_pack=/usr/local/share/icons/MonoDev
-sound_pack=/usr/local/share/sounds/MonoDev
+icon_pack=/usr/share/icons/MonoDev
+sound_pack=/usr/share/sounds/MonoDev
 user=$(who | head -n 1 | awk '{print $1}')
 uid=$(id -u "$user")
 wal_dir=/home/$user/.cache/wal/colors
