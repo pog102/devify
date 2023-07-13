@@ -1,22 +1,30 @@
 #!/usr/bin/env bash
 
-device_name=$1
-# remove underscores for device IDs
-if [[ "$device_name" == *":"* ]]; then
-  # keep device type prefix intact
-  device_name="${device_name%:*}:$(echo "${device_name#*:}" | tr '_' ' ')"
-else
-  device_name="${device_name//_/ }"
-fi
-
-status=$2
 icon_pack=/usr/local/share/icons/MonoDev
 sound_pack=/usr/local/share/sounds/MonoDev
 user=$(who | head -n 1 | awk '{print $1}')
-uid=$( id -u "$user" )
+uid=$(id -u "$user")
 wal_dir=/home/$user/.cache/wal/colors
 icon_color=$(grep -oP '#.*([A-Za-z]|[0-9])' $icon_pack/main_color.svg)
-POWER_ADAPTER_STATUS="/var/run/devify_power_adapter_status"
+DEVICES_LIST_FILE="/var/run/devify_connected_devices"
+DEVICES_LIST_LOCK_FILE="/var/run/devify_connected_devices.lock"
+
+# Check if another instance of the script is already running
+if [[ $(pgrep -c "$0") -gt 1 ]]; then
+    exit
+fi
+
+# wait until file is closed by previous event
+while true; do
+  if test -f "$DEVICES_LIST_LOCK_FILE"; then
+    sleep .1
+  else
+    break
+  fi
+done
+
+# set lock
+touch "$DEVICES_LIST_LOCK_FILE"
 
 DBUS_SESSION_BUS_ADDRESS=unix:path="/run/user/$uid/bus"
 export DBUS_SESSION_BUS_ADDRESS
@@ -26,57 +34,115 @@ export XDG_RUNTIME_DIR
 export DISPLAY=:0
 export WAYLAND_DISPLAY=wayland-0
 
-notify() {
-  if [ "$status" == "add" ]; then
+device_name=""
+
+
+
+# Build device name using passed environment variables from udev rule
+function build_device_name() {
+  local device_pre
+  if [[ -n "$ID_MODEL_FROM_DATABASE" ]] && [[ -n "$ID_VENDOR_FROM_DATABASE" ]]; then
+    device_name="$ID_MODEL_FROM_DATABASE ($ID_VENDOR_FROM_DATABASE)"
+  elif [[ -n "$ID_MODEL" ]] && [[ -n "$ID_VENDOR" ]]; then
+    device_name="$ID_MODEL ($ID_VENDOR)"
+  elif [[ -n "$NAME" ]]; then
+    device_name="$NAME"
+  # power supply special case
+  elif [[ "$POWER_SUPPLY_TYPE" == "Mains" ]]; then
+    device_name="$POWER_SUPPLY_NAME"
+    # overwrite action
+    if [[ "$POWER_SUPPLY_ONLINE" == "1" ]]; then
+      ACTION="add"
+    elif [[ "$POWER_SUPPLY_ONLINE" == "0" ]]; then
+      ACTION="remove"
+    fi
+  fi
+  # remove underscores and double quotes
+  device_name="${device_name//_/ }"
+  device_name="${device_name//\"/}"
+
+  # add prefix if set by rule
+  if [[ -n "$device_name" ]]; then
+    # get type from udev
+    if [[ -n "$DEVIFY_TYPE" ]]; then
+      device_pre="$DEVIFY_TYPE"
+    fi
+
+    if [[ -n "$device_pre" ]]; then
+      device_pre+=":"
+    fi
+
+    # get description from udev
+    if [[ -n "$DEVIFY_DESC" ]]; then
+      device_pre+="$DEVIFY_DESC - "
+    fi
+
+    device_name="$device_pre$device_name"
+  fi
+}
+build_device_name
+
+function notify() {
+  if [[ "$ACTION" == "add" || "$ACTION" == "change" ]]; then
     su "$user" -c "canberra-gtk-play -f ${sound_pack}/add.oga -i 'Devify' -d 'Connected'" &
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Connected'"
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 10) $1' 'Connected'" &
   fi
 
-  if [ "$status" == "remove" ]; then
+  if [ "$ACTION" == "remove" ]; then
     su "$user" -c "canberra-gtk-play -f ${sound_pack}/remove.oga -i 'Devify' -d 'Disconnected'" &
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Disconnected'"
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 10) $1' 'Disconnected'" &
   fi
 }
 
 # Change color by pywall
-
-if test -f "$wal_dir"; then
-  color=$(sed -n 3p "$wal_dir")
-  if [ "$color" != "$icon_color" ]; then
-    for i in "$icon_pack"/*; do
-      sed -i "s/fill=\"#.*\"/fill=\"$color\"/g" "$i"
-    done
+function update_pywall_color() {
+  if test -f "$wal_dir"; then
+    color=$(sed -n 3p "$wal_dir")
+    if [ "$color" != "$icon_color" ]; then
+      for i in "$icon_pack"/*; do
+        sed -i "s/fill=\"#.*\"/fill=\"$color\"/g" "$i"
+      done
+    fi
   fi
-fi
+}
 
-shopt -s nocasematch
-case "$device_name" in
-  *"DualSense"*)
-    notify "PS5 Controller" "ps5_controller"
-    ;;
-  *"DualShock"*)
-    notify "PS4 Controller" "ps4_controller"
-    ;;
-  *"Pro Controller"*)
-    notify "Pro Controller" "switch_pro_controller"
-    ;;
-  *"Katar"*)
-    notify "$device_name" "corsair"
-    ;;
-  *"Keyboard"*)
-    notify "$device_name" "generic_keyboard"
-    ;;
-  *"Mouse"* | *"Logitech MX"* | *"MX Master"*)
-    notify "$device_name" "generic_mouse"
-    ;;
-  *"X-Box"* | *"Xbox"*)
-    notify "Xbox Controller" "xbox_controller"
-    ;;
-  *"Yubico Yubikey"*)
-    notify "Yubikey" "yubikey"
-    ;;
-  *"Cam"*)
-    notify "Webcam" "webcam"
+# format notification text and icons
+function push_notification() {
+  local device_name=$1 # local variable to avoid modifying devices list
+  shopt -s nocasematch
+  case "$device_name" in
+  *"input_device"*)
+  device_name=${device_name#*:}
+  # special input device definitions here
+  case "$device_name" in
+    *"DualSense"*)
+      notify "PS5 Controller" "ps5_controller"
+      ;;
+    *"DualShock"*)
+      notify "PS4 Controller" "ps4_controller"
+      ;;
+    *"Pro Controller"*)
+      notify "Pro Controller" "switch_pro_controller"
+      ;;
+    *"Katar"*)
+      notify "$device_name" "corsair"j
+      ;;
+    *"Keyboard"*)
+      notify "$device_name" "generic_keyboard"
+      ;;
+    *"Mouse"* | *"Logitech MX"* | *"MX Master"*)
+      notify "$device_name" "generic_mouse"
+      ;;
+    *"X-Box"* | *"Xbox"*)
+      notify "Xbox Controller" "xbox_controller"
+      ;;
+    *"Yubico Yubikey"*)
+      notify "Yubikey" "yubikey"
+      ;;
+    *"Cam"*)
+      notify "Webcam" "webcam"
+      ;;
+    esac
     ;;
   *"removable_drive"*)
     # remove custom prefix set from udev rule
@@ -91,28 +157,22 @@ case "$device_name" in
     device_name=${device_name#*:}
     # special serial device definitions here
     case "$device_name" in
-      *"Arduino"*)
-        notify "$device_name" "arduino"
-        ;;
-      *)
-        notify "$device_name" "generic_serial"
-        ;;
+    *"Arduino"*)
+      notify "$device_name" "arduino"
+      ;;
+    *)
+      notify "$device_name" "generic_serial"
+      ;;
     esac
     ;;
   *"power_adapter"*)
     device_name=${device_name#*:}
-    # keep track of the online status because the rule may be triggered multiple times
-    if [ "$status" == "add" ]; then
-        if ! test -f "$POWER_ADAPTER_STATUS" || [ "$(cat $POWER_ADAPTER_STATUS)" == "0" ]; then
-            echo "1" > "$POWER_ADAPTER_STATUS"
-            notify "$device_name" "power_adapter_in"
-        fi
-    elif [ "$status" == "remove" ]; then
-        if ! test -f "$POWER_ADAPTER_STATUS" || [ "$(cat $POWER_ADAPTER_STATUS)" == "1" ]; then
-            echo "0" > "$POWER_ADAPTER_STATUS"
-            notify "$device_name" "power_adapter_out"
-        fi
+    if [[ "$ACTION" == "add" ]];then
+      icon=power_adapter_in
+    else
+      icon=power_adapter_out
     fi
+    notify "$device_name" "$icon"
     ;;
   *"sound_card"*)
     device_name=${device_name#*:}
@@ -124,5 +184,71 @@ case "$device_name" in
     ;;
   *)
     notify "$device_name" ""
-  ;;
-esac
+    ;;
+  esac
+  shopt -u nocasematch
+}
+
+
+
+
+# Get devices list from file into an array
+old_IFS="$IFS"
+if ! test -f "$DEVICES_LIST_FILE"; then
+  connected_list=()
+else
+  connected_list=()
+  devices=$(cat "$DEVICES_LIST_FILE")
+  while IFS= read -r line; do
+    connected_list+=("$line")
+  done <<<"$devices"
+  IFS="$old_IFS"
+fi
+
+# On add device (and change for special case)
+if [[ -n "$device_name" ]] && [[ "$ACTION" == "add" || "$ACTION" == "change" || "$ACTION" == "bind" ]]; then
+  # Add to connected devices if new and push notification
+  # device_exists=0
+  # for i in "${!connected_list[@]}"; do
+  #   if [[ "${connected_list[i]}" == *"$device_name"* ]]; then
+  #     device_exists=1
+  #     break
+  #   fi
+  # done
+
+  # if [ "$device_exists" == "0" ];then
+  #   echo "# Event registered $(date -u +%Y-%m-%d-%H:%M:%S)" >> /tmp/devify-event.log
+  #   echo "$device_name # $ACTION" >> /tmp/devify-event.log
+  #   update_pywall_color
+  #   push_notification "$device_name"
+  #   connected_list+=("$device_name")
+  # fi
+
+  if [[ ! " ${connected_list[*]} " == *"${device_name}"* ]]; then
+    echo "$device_name # $ACTION" >> /tmp/devify-event.log
+    update_pywall_color
+    push_notification "$device_name"
+    connected_list+=("$device_name")
+    printf "%s\n" "${connected_list[@]}" >"$DEVICES_LIST_FILE"
+  fi
+
+# On remove device
+elif [[ -n "$device_name" ]] && [[ "$ACTION" == "remove" ]]; then
+  # Find and remove the device
+  for i in "${!connected_list[@]}"; do
+    if [[ "${connected_list[i]}" == *"$device_name"* ]]; then
+      echo "# Event registered $(date -u +%Y-%m-%d-%H:%M:%S)" >> /tmp/devify-event.log.log
+      echo "$device_name # $ACTION" >> /tmp/devify-event.log
+      unset 'connected_list[i]'
+      update_pywall_color
+      push_notification "$device_name"
+      break
+    fi
+  done
+  # Re-index the array
+  connected_list=("${connected_list[@]}")
+fi
+# Update file
+printf "%s\n" "${connected_list[@]}" >"$DEVICES_LIST_FILE"
+# remove lock
+rm "$DEVICES_LIST_LOCK_FILE"
