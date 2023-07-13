@@ -9,23 +9,6 @@ icon_color=$(grep -oP '#.*([A-Za-z]|[0-9])' $icon_pack/main_color.svg)
 DEVICES_LIST_FILE="/var/run/devify_connected_devices"
 DEVICES_LIST_LOCK_FILE="/var/run/devify_connected_devices.lock"
 
-# Check if another instance of the script is already running
-if [[ $(pgrep -c "$0") -gt 1 ]]; then
-    exit
-fi
-
-# wait until file is closed by previous event
-while true; do
-  if test -f "$DEVICES_LIST_LOCK_FILE"; then
-    sleep .1
-  else
-    break
-  fi
-done
-
-# set lock
-touch "$DEVICES_LIST_LOCK_FILE"
-
 DBUS_SESSION_BUS_ADDRESS=unix:path="/run/user/$uid/bus"
 export DBUS_SESSION_BUS_ADDRESS
 # required by Libcanberra
@@ -34,9 +17,19 @@ export XDG_RUNTIME_DIR
 export DISPLAY=:0
 export WAYLAND_DISPLAY=wayland-0
 
+# wait until file is closed by previous event
+while true; do
+  if test -f "$DEVICES_LIST_LOCK_FILE"; then
+    sleep .5
+  else
+    break
+  fi
+done
+
+# set lock
+touch "$DEVICES_LIST_LOCK_FILE"
+
 device_name=""
-
-
 
 # Build device name using passed environment variables from udev rule
 function build_device_name() {
@@ -85,12 +78,12 @@ build_device_name
 function notify() {
   if [[ "$ACTION" == "add" || "$ACTION" == "change" ]]; then
     su "$user" -c "canberra-gtk-play -f ${sound_pack}/add.oga -i 'Devify' -d 'Connected'" &
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 10) $1' 'Connected'" &
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Connected'" &
   fi
 
   if [ "$ACTION" == "remove" ]; then
     su "$user" -c "canberra-gtk-play -f ${sound_pack}/remove.oga -i 'Devify' -d 'Disconnected'" &
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 10) $1' 'Disconnected'" &
+    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Disconnected'" &
   fi
 }
 
@@ -157,12 +150,12 @@ function push_notification() {
     device_name=${device_name#*:}
     # special serial device definitions here
     case "$device_name" in
-    *"Arduino"*)
-      notify "$device_name" "arduino"
-      ;;
-    *)
-      notify "$device_name" "generic_serial"
-      ;;
+      *"Arduino"*)
+        notify "$device_name" "arduino"
+        ;;
+      *)
+        notify "$device_name" "generic_serial"
+        ;;
     esac
     ;;
   *"power_adapter"*)
@@ -190,8 +183,6 @@ function push_notification() {
 }
 
 
-
-
 # Get devices list from file into an array
 old_IFS="$IFS"
 if ! test -f "$DEVICES_LIST_FILE"; then
@@ -206,26 +197,10 @@ else
 fi
 
 # On add device (and change for special case)
-if [[ -n "$device_name" ]] && [[ "$ACTION" == "add" || "$ACTION" == "change" || "$ACTION" == "bind" ]]; then
-  # Add to connected devices if new and push notification
-  # device_exists=0
-  # for i in "${!connected_list[@]}"; do
-  #   if [[ "${connected_list[i]}" == *"$device_name"* ]]; then
-  #     device_exists=1
-  #     break
-  #   fi
-  # done
-
-  # if [ "$device_exists" == "0" ];then
-  #   echo "# Event registered $(date -u +%Y-%m-%d-%H:%M:%S)" >> /tmp/devify-event.log
-  #   echo "$device_name # $ACTION" >> /tmp/devify-event.log
-  #   update_pywall_color
-  #   push_notification "$device_name"
-  #   connected_list+=("$device_name")
-  # fi
-
+event_handled=0
+if [[ -n "$device_name" ]] && [[ "$ACTION" == "add" || "$ACTION" == "change" ]]; then
   if [[ ! " ${connected_list[*]} " == *"${device_name}"* ]]; then
-    echo "$device_name # $ACTION" >> /tmp/devify-event.log
+    event_handled=1
     update_pywall_color
     push_notification "$device_name"
     connected_list+=("$device_name")
@@ -237,8 +212,7 @@ elif [[ -n "$device_name" ]] && [[ "$ACTION" == "remove" ]]; then
   # Find and remove the device
   for i in "${!connected_list[@]}"; do
     if [[ "${connected_list[i]}" == *"$device_name"* ]]; then
-      echo "# Event registered $(date -u +%Y-%m-%d-%H:%M:%S)" >> /tmp/devify-event.log.log
-      echo "$device_name # $ACTION" >> /tmp/devify-event.log
+      event_handled=1
       unset 'connected_list[i]'
       update_pywall_color
       push_notification "$device_name"
@@ -248,6 +222,13 @@ elif [[ -n "$device_name" ]] && [[ "$ACTION" == "remove" ]]; then
   # Re-index the array
   connected_list=("${connected_list[@]}")
 fi
+
+if [[ "$event_handled" == 1 ]];then
+  echo -e "$(date -u '+%Y-%m-%d %H:%M:%S.%3N') [I] $device_name $ACTION - Handled\n" >> /tmp/devify-event.log
+else
+  echo -e "$(date -u '+%Y-%m-%d %H:%M:%S.%3N') [D] $device_name $ACTION - Ignored\n" >> /tmp/devify-event.log
+fi
+
 # Update file
 printf "%s\n" "${connected_list[@]}" >"$DEVICES_LIST_FILE"
 # remove lock
