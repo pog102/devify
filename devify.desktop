@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Devify
+Comment=Device notification system using udev rules for monitoring connections
+Icon=/usr/share/icons/MonoDev/devify.svg
+Exec=true
