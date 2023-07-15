@@ -78,12 +78,12 @@ build_device_name
 function notify() {
   if [[ "$ACTION" == "add" || "$ACTION" == "change" ]]; then
     su "$user" -c "canberra-gtk-play -f ${sound_pack}/add.oga -i 'Devify' -d 'Connected'" &
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Connected'" &
+    su "$user" -c "notify-send -u low --hint=string:desktop-entry:devify -i ${icon_pack}/$2.svg -a Devify '$1' 'Connected'" &
   fi
 
   if [ "$ACTION" == "remove" ]; then
     su "$user" -c "canberra-gtk-play -f ${sound_pack}/remove.oga -i 'Devify' -d 'Disconnected'" &
-    su "$user" -c "notify-send -u low -i ${icon_pack}/$2.svg -a Devify '$1' 'Disconnected'" &
+    su "$user" -c "notify-send -u low --hint=string:desktop-entry:devify -i ${icon_pack}/$2.svg -a Devify '$1' 'Disconnected'" &
   fi
 }
 
